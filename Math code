@@ -1,0 +1,117 @@
+2.from sympy.physics.vector import ReferenceFrame, curl
+from sympy import symbols
+
+# Define variables
+x, y, z = symbols('x y z')
+
+# Define the reference frame
+v = ReferenceFrame('v')
+
+# Define the vector point function F
+F = x*y**2*v.x + 2*x**2*y*z*v.y - 3*y*z**2*v.z
+
+# Calculate the curl of F
+G = curl(F, v)
+
+# Print the results
+print("Given vector point function is ")
+print(F)
+print("curl of F=")
+print(G)
+
+
+3.import numpy as np
+
+def runge_kutta(f, x0, h, y0, xn):
+    y = [y0]
+    x = x0
+    while x < xn:
+        k1 = h * f(x, y0)
+        k2 = h * f(x + h/2, y0 + k1/2)
+        k3 = h * f(x + h/2, y0 + k2/2)
+        k4 = h * f(x + h, y0 + k3)
+        y1 = y0 + (1/6)*(k1 + 2*k2 + 2*k3 + k4)
+        y.append(y1)
+        x += h
+        y0 = y1
+    return np.round(y, 2)
+
+# Define the function
+def f(x, y):
+    return 1 + y/x
+
+# Call the function
+result = runge_kutta(f, 1, 0.2, 2, 2)
+print(result)
+
+
+
+4.from sympy import symbols, Matrix
+
+# Define symbolic variables
+x, y, z = symbols('x y z')
+
+# Define the scalar function F
+F = x**2 * y * z
+
+# Calculate the gradient of F
+G = Matrix([F.diff(x), F.diff(y), F.diff(z)])
+
+# Print the results
+print("Given scalar function F=")
+print(F)
+print("\n Gradient of F=")
+print(G)
+
+
+7.import numpy as np
+
+def taylor(deriv, x, y, xStop, h):
+    X = [x]
+    Y = [y]
+    while x < xStop:
+        D = deriv(x, y)
+        for j in range(3):  # Assuming we're using up to the third derivative
+            y = y + D[j] * h / (j + 1)
+        x = x + h
+        X.append(x)
+        Y.append(y)
+    return np.array(X), np.array(Y)
+
+# Example derivative function for a simple ODE: y' = 2y
+def deriv(x, y):
+    return np.array([2*y, 4*y, 8*y, 16*y])  # First four derivatives
+
+x = 0.0
+xStop = 0.3
+y = np.array([1.0])  # Initial condition
+h = 0.1
+
+X, Y = taylor(deriv, x, y, xStop, h)
+print("The required values are:")
+for i in range(len(X)):
+    print(f"At x = {X[i]}, y = {Y[i]}")
+
+
+8.from sympy import symbols, lambdify
+import numpy as np
+
+def runge_kutta(g, x0, h, y0, xn):
+    x, y = symbols('x y')
+    f = lambdify([x, y], g)
+    Y = [y0]
+    xt = x0
+    while xt <= xn:
+        k1 = h * f(x0, y0)
+        k2 = h * f(x0 + h/2, y0 + k1/2)
+        k3 = h * f(x0 + h/2, y0 + k2/2)
+        k4 = h * f(x0 + h, y0 + k3)
+        y1 = y0 + (1/6)*(k1 + 2*k2 + 2*k3 + k4)
+        Y.append(y1)
+        x0 = xt
+        y0 = y1
+        xt += h
+    return np.round(Y, 6)
+
+result = runge_kutta('x - y**2', 0, 0.01, 1, 0.2)
+print(f"The value of y at x = 0.2 is approximately: {result[-1]}")
